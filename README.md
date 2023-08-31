@@ -12,8 +12,8 @@
 You run one playbook and set up a node.
 
 ```bash
-ansible-playbook main.yml -e "target=juno_main"
-ansible-playbook -i inventory_testnet.ini main.yml -e "target=juno_test"
+ansible-playbook main.yml -e "target=cosmos_sentry"
+ansible-playbook -i inventory_testnet.ini main.yml -e "target=cosmos_test"
 ```
 
 Because we try our best to support the latest node version, it is not recommended for you to sync from Block 1. Rather, please [state-sync](https://polkachu.com/state_sync) or start from a [snapshot](https://polkachu.com/tendermint_snapshots).
@@ -31,7 +31,7 @@ We have 2 strong opinions about the node configuration:
 
 #### Host Variables
 
-Take a look at the `inventory.sample` file. You will see an example `juno` group with 3 different hosts: `juno_main`, `juno_backup`, and `juno_relayer`. Each host will have the following variables:
+Take a look at the `inventory.sample` file. You will see an example `juno` group with 3 different hosts: `cosmos_sentry`, `juno_backup`, and `juno_relayer`. Each host will have the following variables:
 
 1. `ansible_host`: Required. The IP address of the server.
 1. `type`: Required. It can be `main`, `backup` and `relayer` (also `test` if you are adventurous). Each is opinionated in its configuration settings.
@@ -83,7 +83,6 @@ ansible-playbook main.yml -e "target=HOST_NAME"
 | `support_public_endpoints.yml` | Set up Nginx reverse proxy for public PRC/ API                                                   |
 | `support_seed.yml`             | Install seed node with Tenderseed. You need a node_key.json.j2 file so the node_id is consistent |
 | `support_tenderduty.yml`       | Install Tenderduty                                                                               |
-| `support_price_feeder.yml`     | Install price feeders for selected networks (such Umee, Kujira, etc)                             |
 | `support_scripts.yml`          | Install scripts to make node operations easier                                                   |
 | `support_sync_snapshot.yml`    | Sync node from a snapshot                                                                        |
 | `support_remove_node.yml`      | Remove a node and clean up                                                                       |
@@ -99,35 +98,7 @@ ansible-playbook support_seed.yml -e "target=umee_seed seed=190c4496f3b46d339306
 ##### support_tenderduty
 
 ```bash
-ansible-playbook support_tenderduty.yml -e "target=juno_tenderduty key=junovalcons1qyw2x2sjp40cqasdfyuiahsdfknasdkneafs"
-```
-
-##### support_price_feeder
-
-```bash
-# When you just want to update price feed config
-ansible-playbook support_price_feeder.yml -e "target=kujira_main"
-
-# When you just want to update price feed config and service file
-ansible-playbook support_price_feeder.yml -e "target=kujira_main price_feeder_password=YOUR_PASSWORD"
-
-# When you just want to update price feed config and service file and binary
-ansible-playbook support_price_feeder.yml -e "target=kujira_main price_feeder_password=YOUR_PASSWORD price_feeder_binary=true"
-```
-
-##### support_scripts
-
-```bash
-ansible-playbook support_scripts.yml -e "target=juno_main"
-```
-
-Currently, we have 4 supported scripts. Their usage is documented below using Juno as example:
-
-```bash
-./scripts/bank_balances/juno.sh
-./scripts/bank_send/juno.sh ADDRESS 1000000ujuno
-./scripts/distribution_withdrawal/juno.sh
-./scripts/gov_vote/juno.sh 1 yes
+ansible-playbook support_tenderduty.yml -e "target=cosmos_tenderduty key=cosmosvalcons1qyw2x2sjp40cqasdfyuiahsdfknasdkneafs"
 ```
 
 ## Supported Networks
@@ -145,17 +116,5 @@ In V1, the custom port prefix is 2 digits. However, this hobby project has evolv
 If you have a node running based on V1 port prefix system, you do not need to do anything. However, if you are as OCD as Polkachu, you might want to migrate all the previous nodes to comply with the new system. Here is a playbook to manage the migration. You still need to close the old ports that are not longer in use, but this playbook should take care of the rest.
 
 ```bash
-ansible-playbook support_config_update.yml -e "target=juno_main"
+ansible-playbook support_config_update.yml -e "target=cosmos_sentry"
 ```
-
-## Known Issue
-
-Because this repo tries to accommodate as many Tendermint-based chains as possible, it cannot adapt to all edge cases. Here are some known issues and how to resolve them.
-
-| Chain            | Issue                                                    | Solution                                                                             |
-| ---------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Axelar           | Some extra lines at the end of app.toml                  | Delete extra lines and adjust some settings these extra lines are supposed to change |
-| Canto            | genesis file needs to be unwrapped from .result.genesis  | Unwrap genesis with jq command                                                       |
-| Injective        | Some extra lines at the end of app.toml                  | Delete extra lines and adjust some settings these extra lines are supposed to change |
-| Kichain          | Some extra lines at the end of app.toml                  | Delete extra lines and adjust some settings these extra lines are supposed to change |
-| Celestia testnet | inconsistent config.toml file variable naming convention | Manually adjust config.toml file                                                     |
