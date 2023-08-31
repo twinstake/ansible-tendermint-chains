@@ -18,3 +18,5 @@
     - node_initialize
     - node_configure
     - node_launch
+    # - support_sync_snapshot
+    

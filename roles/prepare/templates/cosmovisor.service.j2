@@ -14,5 +14,9 @@ Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
 Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
 Environment="UNSAFE_SKIP_BACKUP=true"
 
+StandardOutput=append:/var/log/chain/gaiad.log
+StandardError=append:/var/log/chain/gaiad.log
+SyslogIdentifier=gaiad
+
 [Install]
 WantedBy=multi-user.target

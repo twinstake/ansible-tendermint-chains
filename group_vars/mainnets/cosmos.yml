@@ -8,9 +8,10 @@ genesis: 'https://github.com/cosmos/mainnet/blob/master/genesis/genesis.cosmoshu
 genesis_processing: gz
 minimum_gas_price: '0.0025uatom'
 seeds: 'ade4d8bc8cbe014af6ebdf3cb7b1e9ad36f412c0@seeds.polkachu.com:14956'
-custom_port_prefix: 149
+custom_port_prefix: 266
 upgrade_folder: v11
 update_website_immediately: false
+network_type: mainnet
 
 # [Optional] Snapshot
 snapshot_hour: 0
